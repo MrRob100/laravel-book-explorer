@@ -21,7 +21,7 @@
                         </tr>
                         <tr>
                             <td class="text-end"><strong>Date published</strong></td>
-                            <td>{{ $bookCSV->date_published }}</td>
+                            <td>{{ \Illuminate\Support\Carbon::parse($bookCSV->date_published)->format('d/m/Y') }}</td>
                         </tr>
                         <tr>
                             <td class="text-end"><strong>Unique identifier</strong></td>

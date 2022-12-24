@@ -26,10 +26,10 @@
                                 <td><a href="{{ route('bookcsv.show', $bookCSV) }}">{{ $bookCSV->file_name }}</a></td>
                                 <td>{{ $bookCSV->book_title }}</td>
                                 <td>{{ $bookCSV->book_author }}</td>
-                                <td>{{ $bookCSV->date_published }}</td>
+                                <td>{{ \Illuminate\Support\Carbon::parse($bookCSV->date_published)->format('d/m/Y') }}</td>
                                 <td>{{ $bookCSV->unique_identifier }}</td>
                                 <td>{{ $bookCSV->publisher_name }}</td>
-                                <td>{{ $bookCSV->created_at }}</td>
+                                <td>{{ $bookCSV->created_at->format('d/m/Y') }}</td>
                                 <td><a class="btn btn-outline-primary" href="{{ route('bookcsv.show', $bookCSV) }}"><i class="fa fa-eye"></i></a></td>
                             </tr>
                         @endforeach

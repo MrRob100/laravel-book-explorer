@@ -7,6 +7,7 @@ use App\Imports\BookCSVImport;
 use App\Models\BookCSV;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
@@ -51,6 +52,11 @@ class CSVController extends Controller
         if($uploaded) {
             $data = array_merge($imported, ['file_name' => $name]);
             $record = $request->user()->BookCSVs()->create($data);
+
+            Http::post('https://postman-echo.com/post', [
+                's3_url' => env('AWS_BUCKET_ENDPOINT') . $name,
+            ]);
+
         } else {
             return redirect()->back()->with('upload_errors', [['Failed to upload file']]);
         }
