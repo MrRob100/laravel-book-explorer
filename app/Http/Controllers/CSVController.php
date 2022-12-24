@@ -6,6 +6,7 @@ use App\Http\Requests\UploadCSVRequest;
 use App\Imports\BookCSVImport;
 use App\Models\BookCSV;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
@@ -14,9 +15,11 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class CSVController extends Controller
 {
-    public function index(): View
+    public function index(Request $request): View
     {
-        return view('book-csv.index');
+        $bookCSVs = $request->user()->bookCSVs()->paginate(15);
+
+        return view('book-csv.index')->with('bookCSVs', $bookCSVs);
     }
 
     public function create(): View
