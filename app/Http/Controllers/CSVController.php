@@ -11,7 +11,6 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Maatwebsite\Excel\Facades\Excel;
-use Maatwebsite\Excel\Validators\ValidationException;
 
 class CSVController extends Controller
 {
@@ -22,8 +21,6 @@ class CSVController extends Controller
 
     public function create(): View
     {
-        dd(route('bookcsv.show', 1));
-
         return view('book-csv.create');
     }
 
@@ -49,8 +46,8 @@ class CSVController extends Controller
         $uploaded = Storage::disk('s3')->put($filePath, file_get_contents($file));
 
         if($uploaded) {
-            $data = array_merge($imported, ['file_name' => env('AWS_BUCKET_ENDPOINT') . $name]);
-            $record = BookCSV::create($data);
+            $data = array_merge($imported, ['file_name' => $name]);
+            $record = $request->user()->BookCSVs()->create($data);
         } else {
             return redirect()->back()->with('upload_errors', [['Failed to upload file']]);
         }
@@ -58,8 +55,8 @@ class CSVController extends Controller
         return redirect(route('bookcsv.show', $record));
     }
 
-    public function show(BookCSV $bookCSV): View
+    public function show(BookCSV $bookcsv): View
     {
-        return view('book-csv.show')->with('bookCSV', $bookCSV);
+        return view('book-csv.show')->with('bookCSV', $bookcsv);
     }
 }

@@ -2,6 +2,7 @@
 
 @section('content')
 <div class="container">
+    {{ Breadcrumbs::render('bookcsv.create') }}
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">
@@ -16,9 +17,6 @@
                                     Here are the expected columns for your CSV file:
                                     'book_title, book_author, date_published (Y-m-d), unique_identifier, publisher_name'.
                                 </p>
-                            </div>
-                            <div class="flex-00-auto">
-                                <i class="fa fa-fw fa-exclamation-circle"></i>
                             </div>
                         </div>
 

@@ -15,6 +15,7 @@ return new class extends Migration
     {
         Schema::create('book_csvs', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->constrained('users');
             $table->string('book_title');
             $table->string('book_author');
             $table->dateTime('date_published');
