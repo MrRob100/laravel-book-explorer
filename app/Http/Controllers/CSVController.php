@@ -4,7 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\UploadCSVRequest;
 use App\Imports\BookCSVImport;
+use App\Models\BookCSV;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Maatwebsite\Excel\Facades\Excel;
 use Maatwebsite\Excel\Validators\ValidationException;
@@ -18,23 +22,44 @@ class CSVController extends Controller
 
     public function create(): View
     {
+        dd(route('bookcsv.show', 1));
+
         return view('book-csv.create');
     }
 
     public function store(UploadCSVRequest $request): RedirectResponse
     {
-        try{
-            $data = Excel::import(new BookCSVImport, $request->csv);
-            dd($data);
-        } catch(ValidationException $e) {
-            return redirect()->back()->with('import_errors', $e->failures());
+        $imported = Excel::toArray(new BookCSVImport, $request->csv)[0][0];
+        $validator = Validator::make($imported, [
+            'book_title' => 'required',
+            'book_author' => 'required',
+            'date_published' => 'required|date_format:Y-m-d',
+            'unique_identifier' => 'required|unique:book_csvs',
+            'publisher_name' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()->back()->with('upload_errors', $validator->errors()->messages());
         }
 
-        return redirect('bookcsv.index');
+        $file = $request->csv;
+        $name = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME) . '-' .
+            Str::uuid() . '.' . $file->getClientOriginalExtension();
+        $filePath = '/' . $name;
+        $uploaded = Storage::disk('s3')->put($filePath, file_get_contents($file));
+
+        if($uploaded) {
+            $data = array_merge($imported, ['file_name' => env('AWS_BUCKET_ENDPOINT') . $name]);
+            $record = BookCSV::create($data);
+        } else {
+            return redirect()->back()->with('upload_errors', [['Failed to upload file']]);
+        }
+
+        return redirect(route('bookcsv.show', $record));
     }
 
-    public function show($id): View
+    public function show(BookCSV $bookCSV): View
     {
-//        return view('bookcsv.view')->with()
+        return view('book-csv.show')->with('bookCSV', $bookCSV);
     }
 }

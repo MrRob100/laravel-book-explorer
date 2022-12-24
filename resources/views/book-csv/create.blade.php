@@ -14,7 +14,7 @@
                             <div class="flex-fill mr-3">
                                 <p class="mb-0">
                                     Here are the expected columns for your CSV file:
-                                    'book_title, book_author, date_published, unique_identifier, publisher_name'.
+                                    'book_title, book_author, date_published (Y-m-d), unique_identifier, publisher_name'.
                                 </p>
                             </div>
                             <div class="flex-00-auto">
@@ -29,7 +29,7 @@
                                 <input
                                     id="csv"
                                     type="file"
-                                    class="form-control @error('csv') is-invalid @enderror"
+                                    class="form-control @error('csv') is-invalid @enderror @if(Session::has('upload_errors')) is-invalid @endif"
                                     name="csv"
                                     accept="csv"
                                     required
@@ -40,9 +40,9 @@
                                 <p class="text-danger mt-2 mb-0">{{ $errors->get('csv')[0] }}</p>
                             @enderror
 
-                            @if(Session::has('import_errors'))
-                                @foreach(Session::get('import_errors') as $failure)
-                                    <p class="text-danger mt-2 mb-0">{{ $failure->errors()[0] }}</p>
+                            @if(Session::has('upload_errors'))
+                                @foreach(Session::get('upload_errors') as $failure)
+                                    <p class="text-danger mt-2 mb-0">{{ $failure[0] }}</p>
                                 @endforeach
                             @endif
 

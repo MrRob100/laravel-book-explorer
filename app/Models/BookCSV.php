@@ -9,12 +9,14 @@ class BookCSV extends Model
 {
     use HasFactory;
 
+    protected $table = 'book_csvs';
+
     protected $fillable = [
-        'title',
-        'author',
+        'book_title',
+        'book_author',
         'date_published',
         'unique_identifier',
-        'publisher',
-        'file_url',
+        'publisher_name',
+        'file_name',
     ];
 }
