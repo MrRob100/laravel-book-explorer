@@ -30,7 +30,7 @@
                                 <td>{{ $bookCSV->unique_identifier }}</td>
                                 <td>{{ $bookCSV->publisher_name }}</td>
                                 <td>{{ $bookCSV->created_at }}</td>
-                                <td><a class="btn btn-sm btn-primary" href="{{ route('bookcsv.show', $bookCSV) }}">show</a></td>
+                                <td><a class="btn btn-outline-primary" href="{{ route('bookcsv.show', $bookCSV) }}"><i class="fa fa-eye"></i></a></td>
                             </tr>
                         @endforeach
                         </tbody>
