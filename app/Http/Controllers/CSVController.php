@@ -54,7 +54,7 @@ class CSVController extends Controller
             $record = $request->user()->BookCSVs()->create($data);
 
             Http::post('https://postman-echo.com/post', [
-                's3_url' => env('AWS_BUCKET_ENDPOINT') . $name,
+                's3_url' => $record->url,
             ]);
 
         } else {

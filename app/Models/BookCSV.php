@@ -19,4 +19,9 @@ class BookCSV extends Model
         'publisher_name',
         'file_name',
     ];
+
+    public function getURLAttribute(): string
+    {
+        return env('AWS_BUCKET_ENDPOINT') . $this->file_name;
+    }
 }

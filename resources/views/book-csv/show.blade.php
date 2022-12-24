@@ -31,6 +31,10 @@
                             <td class="text-end"><strong>Publisher name</strong></td>
                             <td>{{ $bookCSV->publisher_name }}</td>
                         </tr>
+                        <tr>
+                            <td class="text-end"><strong>Uploaded file url</strong></td>
+                            <td><a href="{{ $bookCSV->url }}">{{ $bookCSV->url }}</a></td>
+                        </tr>
                         </tbody>
                     </table>
                 </div>
