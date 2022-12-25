@@ -41,6 +41,7 @@ class CSVControllerTest extends TestCase
         $response = $this->actingAs($bookCSV->user)->get("/bookcsv/{$bookCSV->id}");
         $response->assertStatus(200);
         $response->assertViewIs('book-csv.show');
+        $response->assertSee($bookCSV->url);
     }
 
     public function test_we_cannot_view_show_unauthenticated()
@@ -84,6 +85,56 @@ class CSVControllerTest extends TestCase
         $response->assertStatus(302)
             ->assertRedirect("/bookcsv/{$bookCSV->id}");
 
+        $response->assertSessionMissing('upload_errors');
+
         Storage::disk('s3')->assertExists('/' . $bookCSV->file_name);
+    }
+
+    public function test_we_cannot_upload_same_file_twice_due_to_unique_ref_constraint()
+    {
+        Storage::fake('s3');
+        $user = User::factory()->create();
+
+        $csv =  new UploadedFile(
+            base_path('tests/Files/test.csv'),
+            'test.csv',
+            'text/csv',
+            null,
+            true
+        );
+
+        $this->actingAs($user)->post('/bookcsv', ['csv' => $csv]);
+
+        $csv2 = new UploadedFile(
+            base_path('tests/Files/test.csv'),
+            'test.csv',
+            'text/csv',
+            null,
+            true
+        );
+
+        $response2 = $this->actingAs($user)->post('/bookcsv', ['csv' => $csv2]);
+        $response2->assertSessionHas('upload_errors');
+        $this->assertDatabaseCount('book_csvs', 1);
+        $this->assertEquals(1, $user->bookCSVs()->count());
+    }
+
+    public function test_we_cannot_upload_invalid_file()
+    {
+        Storage::fake('s3');
+        $user = User::factory()->create();
+
+        $csv =  new UploadedFile(
+            base_path('tests/Files/test-invalid.csv'),
+            'test.csv',
+            'text/csv',
+            null,
+            true
+        );
+
+        $response = $this->actingAs($user)->post('/bookcsv', ['csv' => $csv]);
+        $response->assertSessionHas('upload_errors');
+        $this->assertDatabaseEmpty('book_csvs');
+        $this->assertEquals(0, $user->bookCSVs()->count());
     }
 }
