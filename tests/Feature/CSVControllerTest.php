@@ -6,6 +6,8 @@ use App\Models\BookCSV;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class CSVControllerTest extends TestCase
@@ -62,5 +64,26 @@ class CSVControllerTest extends TestCase
         $response = $this->get('/bookcsv/create');
         $response->assertStatus(302);
         $response->assertRedirect('login');
+    }
+
+    public function test_we_can_upload_a_file()
+    {
+        Storage::fake('s3');
+        $user = User::factory()->create();
+
+        $csv =  new UploadedFile(
+            base_path('tests/Files/test.csv'),
+            'test.csv',
+            'text/csv',
+            null,
+            true
+        );
+
+        $response = $this->actingAs($user)->post('/bookcsv', ['csv' => $csv]);
+        $bookCSV = $user->BookCSVs()->first();
+        $response->assertStatus(302)
+            ->assertRedirect("/bookcsv/{$bookCSV->id}");
+
+        Storage::disk('s3')->assertExists('/' . $bookCSV->file_name);
     }
 }

@@ -2,6 +2,9 @@
 
 namespace App\Providers;
 
+use App\Interfaces\UploadNotificationServiceInterface;
+use App\Mocks\UploadNotificationServiceMock;
+use App\Services\UploadNotificationService;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 
@@ -14,7 +17,13 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        $this->app->bind(UploadNotificationServiceInterface::class, function () {
+            if ($this->app->environment('testing')) {
+                return new UploadNotificationServiceMock();
+            } else {
+                return new UploadNotificationService();
+            }
+        });
     }
 
     /**
