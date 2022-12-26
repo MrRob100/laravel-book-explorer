@@ -48,7 +48,6 @@ class CSVController extends Controller
             Str::uuid() . '.' . $file->getClientOriginalExtension();
         $filePath = '/' . $name;
 
-        //put this and the Http::post in a service that we can then mock and therefor test
         $uploaded = Storage::disk('s3')->put($filePath, file_get_contents($file));
 
         if($uploaded) {
