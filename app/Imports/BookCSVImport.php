@@ -7,7 +7,7 @@ use Maatwebsite\Excel\Concerns\WithHeadingRow;
 
 class BookCSVImport implements ToArray, WithHeadingRow
 {
-    public function array(array $array)
+    public function array(array $array): void
     {
     }
 }
