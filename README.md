@@ -11,3 +11,9 @@ Repository:
 <br>
 https://github.com/MrRob100/laravel-book-explorer
 
+![](public/screenshots/register.png)
+![](public/screenshots/login.png)
+![](public/screenshots/create.png)
+![](public/screenshots/create-upload-error.png)
+![](public/screenshots/show.png)
+![](public/screenshots/index.png)
