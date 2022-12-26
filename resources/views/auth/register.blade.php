@@ -54,6 +54,15 @@
                                 </button>
                             </div>
                         </div>
+
+                        <div class="row mb-0">
+                            <div class="col-md-8 offset-md-4">
+                                Already have an account?
+                                <a class="ps-1 btn btn-link" href="{{ route('login') }}">
+                                    Login
+                                </a>
+                            </div>
+                        </div>
                     </form>
                 </div>
             </div>
