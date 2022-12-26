@@ -137,4 +137,23 @@ class CSVControllerTest extends TestCase
         $this->assertDatabaseEmpty('book_csvs');
         $this->assertEquals(0, $user->bookCSVs()->count());
     }
+
+    public function test_we_cannot_upload_file_using_incorrect_post_param()
+    {
+        Storage::fake('s3');
+        $user = User::factory()->create();
+
+        $csv =  new UploadedFile(
+            base_path('tests/Files/test.csv'),
+            'test.csv',
+            'text/csv',
+            null,
+            true
+        );
+
+        $response = $this->actingAs($user)->post('/bookcsv', ['invalid_key' => $csv]);
+        $response->assertSessionHasErrors('csv');
+        $this->assertDatabaseEmpty('book_csvs');
+        $this->assertEquals(0, $user->bookCSVs()->count());
+    }
 }
